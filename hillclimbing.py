@@ -48,8 +48,6 @@ for i in range(4):
 
 min_ = len(get_susceptibles(graph, infected, removed))
 
-p=0.1
-
 for k in range(100):
 	e = random.choice(list(removed))
 	removed.remove(e)
@@ -64,6 +62,3 @@ for k in range(100):
 		min_ = fitness
 
 	print(k , removed, fitness, min_)
-
-	if k% 100 == 0:
-		p/=10
