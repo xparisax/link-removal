@@ -39,15 +39,18 @@ def fitness(gragh, removed, infected):
 
 	return len(susceptible - infected)
 
+isremoved = set()
+
 for i in range(100):
 	print('############    THIS IS THE ' + str(i) + 'th ATTEMPT    ############')
 
-	randEdge = randomEdges(random.randrange(1,B+1))
+	randEdge = randomEdges(random.randrange(1, B+1))
 	removed = {i for i in randEdge}
 	best = fitness(graph, removed, infected)
-	rbest = len(removed)
-	#print('REMOVED EDGES ARE: ' + removed + '\n' +
-	#	'BEST FITNESS IS: ' + best + '\n')
+	rbest = len(removed) #removed best
+	print('REMOVED EDGES ARE: ', end = '')
+	print(removed)
+	print('BEST FITNESS IS: ' + str(best))
 
 	while len(removed) <= B:
 
@@ -82,8 +85,8 @@ for i in range(100):
 
 			if recbest <= best:
 				best = recbest
-				removed = isremoved
+				removed = lremoved
 
-
-		#print('REMOVED EDGES ARE: ' + removed + '\n' +
-		#'BEST FITNESS IS: ' + str(best) + '\n')
+		print('REMOVED EDGES ARE: ', end = '')
+		print(removed)
+		print('BEST FITNESS IS: ' + str(best))
