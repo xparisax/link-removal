@@ -1,26 +1,21 @@
-import random
+from graphInput import *
 
-graph = {
-	1: {2,6},
-	2: {1,3},
-	3: {2, 4, 6},
-	4: {3,5},
-	5: {4,6},
-	6: {3,1,5}
-}
+myFile = open('input.txt', 'r')
 
-infected = {2,5}
-removed = set()
+def randomEdges(n):
+	edge = []
+	edges = []
+	for line in myFile:
+		edge.append(line)
+		edge = [x.strip() for x in edge]
+	for i in range(len(edge)):
+		u, v = edge[i].split()
+		edges.append((int(u),int(v)))
 
-def random_edge(graph, removed):
-	edges = [(u, v)
-		for u, vs in graph.items()
-		for v in vs
-		if u< v if (u,v) not in removed
-	]
-	return random.choice(edges)
+	return random.sample(edges, n)
 
-def get_susceptibles(graph, infected, removed):
+
+def fitness(gragh, removed, infected):
 	susceptible = set()
 
 	def dfs(node):
@@ -28,41 +23,72 @@ def get_susceptibles(graph, infected, removed):
 			return
 
 		susceptible.add(node)
-		for dst in graph[node]:
-			if (node, dst) in removed:
+		for u in graph[node]:
+			if (node, u) in removed:
 				continue
 
-			if (dst, node) in removed:
+			if (u, node) in removed:
 				continue
 
-			dfs(dst)
+			dfs(u)
 
 	for v in infected:
 		dfs(v)
 
-	return (susceptible - infected)
+	return len(susceptible - infected)
 
-for i in range(4):
-	removed.add(random_edge(graph, removed))
+for i in range(100):
+	print('############    THIS IS THE ' + str(i) + 'th ATTEMPT    ############')
 
-min_ = len(get_susceptibles(graph, infected, removed))
+	randEdge = randomEdges(random.randrange(1,B+1))
+	removed = {i for i in randEdge}
+	best = fitness(graph, removed, infected)
+	rbest = len(removed)
+	#print('REMOVED EDGES ARE: ' + removed + '\n' +
+	#	'BEST FITNESS IS: ' + best + '\n')
 
-p=0.1
+	prob = 0.1
+	while len(removed) <= B:
 
-for k in range(100):
-	e = random.choice(list(removed))
-	removed.remove(e)
-	n = random_edge(graph, removed)
-	removed.add(n)
+		count = 1
+		p = random.choice([0,1])
 
-	fitness = len(get_susceptibles(graph, infected, removed))
-	if (fitness > min_ or random.random() < p):
-		removed.remove(n)
-		removed.add(e)
-	else:
-		min_ = fitness
+		if p:
+			added = randomEdges(random.randrange(1,B+1))
+			isremoved = {e for e in added}
 
-	print(k , removed, fitness, min_)
+			recbest = fitness(graph, isremoved, infected)
+			rrecbest = len(isremoved)
 
-	if k% 100 == 0:
-		p/=10
+			if recbest < best and random.random() < prob:
+				best = recbest
+				removed = isremoved
+
+			if  recbest == best and random.random() < prob:
+
+				if rrecbest < rbest:
+					removed = isremoved
+
+				if rrecbest == rbest:
+					pr = random.choice([0,1])
+					if pr:
+						removed = isremoved
+
+		if not p:
+
+			lremoved = random.sample(removed, random.randint(1, rbest-1))
+			recbest = fitness(graph, lremoved, infected)
+			rrecbest = len(lremoved)
+
+			if recbest <= best and random.random() < prob:
+				best = recbest
+				removed = isremoved
+
+
+		#print('REMOVED EDGES ARE: ' + removed + '\n' +
+		#'BEST FITNESS IS: ' + str(best) + '\n')
+
+		count += 1
+
+		if count%100 == 0:
+			prob /= 10
