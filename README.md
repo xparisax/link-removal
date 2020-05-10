@@ -1,5 +1,5 @@
 # link-removal
-Methods for removing links in a network to minimize the spread of infections[www.elsevier.com/locate/caor]
+Methods for removing links in a network to minimize the spread of infections[DOI: 10.1016/j.cor.2015.11.001]
 
 Running search algorithms on the above article for AI class (at Amirkabir university of technology)
 
